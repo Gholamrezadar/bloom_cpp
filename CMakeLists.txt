@@ -23,7 +23,9 @@ set(BUILD_GAMES OFF)
 FetchContent_MakeAvailable(raylib)
 
 # Define your executable
-add_executable(Bloom_CPP src/main.cpp)
+add_executable(Bloom_CPP src/main.cpp src/MyImage.cpp src/MyImage.h)
+
+target_include_directories(Bloom_CPP PRIVATE src)
 
 # Link raylib
 target_link_libraries(Bloom_CPP PRIVATE raylib)
