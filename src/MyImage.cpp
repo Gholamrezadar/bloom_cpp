@@ -32,11 +32,20 @@ MyImage::MyImage(const char* path) : path(path) {
     UnloadImageColors(colors);
 }
 
-MyImage::~MyImage() {
-    UnloadImage(image_);
+MyImage::MyImage(int width, int height, int channels) : width(width), height(height), channels(channels) {
+    data = std::vector<std::vector<std::vector<double>>>(
+        height,
+        std::vector<std::vector<double>>(
+            width,
+            std::vector<double>(channels, 0.0)));
+    // NOTE: bad! where is the image_ initilization?
 }
 
-double MyImage::GetPixel(int x, int y, int channel) {
+MyImage::~MyImage() {
+    // UnloadImage(image_);
+}
+
+double MyImage::GetPixel(int x, int y, int channel) const{
     return data[y][x][channel];
 }
 
@@ -59,15 +68,15 @@ void MyImage::Save(const char* filename) {
         }
     }
 
-    // Copy to image_.data
-    if (image_.format != PIXELFORMAT_UNCOMPRESSED_R8G8B8A8) {
-        ImageFormat(&image_, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8);
-    }
-
-    memcpy(image_.data, colors, width * height * sizeof(Color));
-    free(colors);
-
+    image_ = GenImageColor(width, height, BLANK);
+    image_.format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
+    image_.width = width;
+    image_.height = height;
+    image_.mipmaps = 1;
+    image_.data = colors;
+    
     ExportImage(image_, filename);
+    free(colors);
 }
 
 int MyImage::GetChannelCount_(int format) {

@@ -12,9 +12,10 @@ class MyImage {
 
    public:
     MyImage(const char* path);
+    // creates an empty image of given dimensions
+    MyImage(int width, int height, int channels);
     ~MyImage();
-    
-    double GetPixel(int x, int y, int channel);
+    double GetPixel(int x, int y, int channel) const;
     void SetPixel(int x, int y, int channel, double value);
     void Save(const char* filename);
 
