@@ -13,8 +13,16 @@ class MyImage {
 
    public:
     MyImage(const char* path);
-    // creates an empty image of given dimensions
     MyImage(int width, int height, int channels);
+    
+    // Copy constructor and assignment operator for proper memory management
+    MyImage(const MyImage& other);
+    MyImage& operator=(const MyImage& other);
+    
+    // Move constructor and assignment operator for efficiency
+    MyImage(MyImage&& other) noexcept;
+    MyImage& operator=(MyImage&& other) noexcept;
+
     ~MyImage();
 
     inline const double GetPixel(int x, int y, int channel) const {

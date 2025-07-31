@@ -32,7 +32,8 @@ I tried different approaches to improve performance, here I list them for future
 | Arithmetic Optimisations in BilinearTap                   | 0.98 secs | 3.11x   |
 | static const double arrays instead of vectors for weights | 0.94 secs | 3.24x   |
 | Avoid divisions in the inner-loop                         | 0.87 secs | 3.50x   |
-| Claude.ai                                                 | 0.72 secs | 4.23x   |
+| std::move and emplace_back                                | 0.81 secs | 3.76x   |
+| Claude's version                                          | 0.72 secs | 4.23x   |
 
 ### 1. Flat vector instead of 3D vector
 
@@ -125,14 +126,13 @@ This improved the performance from `0.98` secs to `0.94` secs per 1024x1024 imag
 
 Avoid divisions in the inner-loop by pre-computing the inverse of `new_w` and `new_h`.
 
-This improved the performance from `0.94` secs to `0.72` secs per 1024x1024 image.
+This improved the performance from `0.94` secs to `0.88` secs per 1024x1024 image.
 
-### 7. Claude's optimizations
+### 7. std::move and emplace_back
 
 Claude recommended a few other optimizations, including:
 
 - Using `std::move` instead of copying
 - Using `std::vector::emplace_back` instead of `std::vector::push_back`
-- and a few other small optimizations
 
-This improved the performance from `0.94` secs to `0.72` secs per 1024x1024 image.
+This improved the performance from `0.88` secs to `0.80` secs per 1024x1024 image.

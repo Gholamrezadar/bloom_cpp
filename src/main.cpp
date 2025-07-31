@@ -203,52 +203,42 @@ MyImage Lerp(const MyImage& a, const MyImage& b, double t) {
 void Bloom(MyImage& image, int samples = 8) {
     // Downsample stack
     std::vector<MyImage> downsampled_list;
-    // Add the original image to the downsampled list, it makes the upsampling easier
-    downsampled_list.push_back(image);
-    MyImage temp = image;
-    for (int i = 0; i < samples; ++i) {
-        MyImage downsampled = DownSample(temp);
-        // std::cout << "Downsampled image " << i << " width: " << downsampled.width << " height: " << downsampled.height << std::endl;
-        downsampled_list.push_back(downsampled);
-        temp = downsampled;
-        // temp.Save(("downsampled_" + std::to_string(i) + ".png").c_str());
-    }
+    downsampled_list.reserve(samples + 1);
 
-    // std::cout << std::endl;
+    // Add the original image
+    downsampled_list.emplace_back(std::move(image));
+    
+    // Downsample chain
+    for (int i = 0; i < samples; ++i) {
+        downsampled_list.emplace_back(DownSample(downsampled_list.back()));
+    }
 
     // Upsample stack
-    double lerp_weight = 0.2;
-    temp = downsampled_list[samples];
+    constexpr double lerp_weight = 0.2;
+    MyImage temp = std::move(downsampled_list[samples]);
+    
     for (int i = samples; i > 0; --i) {
         MyImage upsampled = Upsample(temp);
-        // std::cout << "Upsampled image " << i << " width: " << upsampled.width << " height: " << upsampled.height << std::endl;
-        temp = Lerp(upsampled, downsampled_list[i - 1], lerp_weight);
-        // temp.Save(("upsampled_" + std::to_string(i) + ".png").c_str());
+        temp = Lerp(upsampled, downsampled_list[i-1], lerp_weight);
     }
-
-    double mult = 6.0;
-    // multiply every value by mult
-    for (int y = 0; y < temp.height; ++y) {
-        for (int x = 0; x < temp.width; ++x) {
-            for (int c = 0; c < temp.channels; ++c) {
-                temp.SetPixel(x, y, c, std::min(std::max(temp.GetPixel(x, y, c) * mult, 0.0), 1.0));
-            }
-        }
+    
+    
+    // Final multiplication and clamping
+    constexpr double mult = 6.0;
+    double* data = temp.data.data();
+    int total_elements = temp.width * temp.height * temp.channels;
+    
+    for (int i = 0; i < total_elements; ++i) {
+        data[i] = std::max(0.0, std::min(data[i] * mult, 1.0));
     }
-
-    image = temp;
+    
+    // image = temp;
+    image = std::move(temp);
 }
 
 int main(int argc, const char** argv) {
     // load the image
     MyImage image("images/image2.png");
-    // std::cout << "Image width: " << image.width << std::endl;
-    // std::cout << "Image height: " << image.height << std::endl;
-    // std::cout << "Image channels: " << image.channels << std::endl;
-
-    BilinearTap(image, 0.5, 0.5, 0);
-    // process the image
-    // std::cout << "Before:" << image.GetPixel(512, 512, 0) << std::endl;
 
     // Measure time
     std::cout << "Performing Bloom...\n";
@@ -258,13 +248,9 @@ int main(int argc, const char** argv) {
 
     std::chrono::duration<double> elapsed = end - start;
     std::cout << "Elapsed time: " << elapsed.count() << " seconds\n";
-    // std::cout << "After:" << image.GetPixel(512, 512, 0) << std::endl;
 
-    // save the image
+    // Save and display the result
     // image.Save("output.png");
-    // std::cout << "Image saved to output.png" << std::endl;
-
-    // display the result
     // DisplayImage("output.png");
     return 0;
 }

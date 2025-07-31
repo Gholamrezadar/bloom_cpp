@@ -36,6 +36,29 @@ MyImage::~MyImage() {
     // UnloadImage(image_);
 }
 
+// Move constructor
+MyImage::MyImage(MyImage&& other) noexcept
+    : width(other.width), height(other.height), channels(other.channels),
+      path(other.path), image_(other.image_), data(other.data) {
+    other.width = other.height = other.channels = 0;
+}
+
+// Move assignment
+MyImage& MyImage::operator=(MyImage&& other) noexcept {
+    if (this != &other) {
+        
+        width = other.width;
+        height = other.height;
+        channels = other.channels;
+        path = other.path;
+        image_ = other.image_;
+        data = other.data;
+        
+        other.width = other.height = other.channels = 0;
+    }
+    return *this;
+}
+
 void MyImage::Save(const char* filename) {
     Color* colors = (Color*)malloc(width * height * sizeof(Color));
 
