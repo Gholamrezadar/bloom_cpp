@@ -28,6 +28,7 @@ I tried different approaches to improve performance, here I list them for future
 | Baseline                         | 3.05 secs | 1x      |
 | Flat vector instead of 3D vector | 1.30 secs | 2.3x    |
 | Inline the GetPixel and SetPixel | 1.08 secs | 1.2x    |
+| Flat Lerp instead of 3D Lerp     | 1.06 secs | 1.01x    |
 
 ### 1. Flat vector instead of 3D vector
 
@@ -69,3 +70,34 @@ void SetPixel(int x, int y, int channel, double value) {
 GetPixel and SetPixel are called very often, let's reduce the number of function calls.
 
 This improved the performance from `1.30` secs to `1.08` secs per 1024x1024 image.
+
+### 3. Flat Lerp instead of 3D Lerp
+
+This didn't help that much.
+
+From
+```cpp
+MyImage Lerp(const MyImage& a, const MyImage& b, double t) {
+    MyImage result(a.width, a.height, a.channels);
+    for (int i = 0; i < a.height; ++i) {
+        for (int j = 0; j < a.width; ++j) {
+            for (int ch = 0; ch < a.channels; ++ch) {
+                result.SetPixel(j, i, ch, a.GetPixel(j, i, ch) * (1.0 - t) + b.GetPixel(j, i, ch) * t);
+            }
+        }
+    }
+    return result;
+}
+```
+
+To
+
+```cpp
+MyImage Lerp(const MyImage& a, const MyImage& b, double t) {
+    MyImage result(a.width, a.height, a.channels);
+    for(int i=0; i<a.data.size(); ++i) {
+        result.data[i] = a.data[i] * (1.0 - t) + b.data[i] * t;
+    }
+    return result;
+}
+```

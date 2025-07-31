@@ -169,12 +169,8 @@ MyImage DownSample(const MyImage& image) {
 MyImage Lerp(const MyImage& a, const MyImage& b, double t) {
     assert(a.width == b.width && a.height == b.height && a.channels == b.channels);
     MyImage result(a.width, a.height, a.channels);
-    for (int i = 0; i < a.height; ++i) {
-        for (int j = 0; j < a.width; ++j) {
-            for (int ch = 0; ch < a.channels; ++ch) {
-                result.SetPixel(j, i, ch, a.GetPixel(j, i, ch) * (1.0 - t) + b.GetPixel(j, i, ch) * t);
-            }
-        }
+    for(int i=0; i<a.data.size(); ++i) {
+        result.data[i] = a.data[i] * (1.0 - t) + b.data[i] * t;
     }
     return result;
 }
