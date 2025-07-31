@@ -23,12 +23,14 @@ Measured on an Intel i7-12700 CPU
 
 I tried different approaches to improve performance, here I list them for future reference. (CPU: i7-4930k)
 
-| Technique                        | Time      | Speedup |
-| -------------------------------- | --------- | ------- |
-| Baseline                         | 3.05 secs | 1x      |
-| Flat vector instead of 3D vector | 1.30 secs | 2.3x    |
-| Inline the GetPixel and SetPixel | 1.08 secs | 1.2x    |
-| Flat Lerp instead of 3D Lerp     | 1.06 secs | 1.01x    |
+| Technique                                                 | Time      | Speedup |
+| --------------------------------------------------------- | --------- | ------- |
+| Baseline                                                  | 3.05 secs | 1x      |
+| Flat vector instead of 3D vector                          | 1.30 secs | 2.3x    |
+| Inline the GetPixel and SetPixel                          | 1.08 secs | 2.82x   |
+| Flat Lerp instead of 3D Lerp                              | 1.06 secs | 2.87x   |
+| Arithmetic Optimisations in BilinearTap                   | 0.98 secs | 3.11x   |
+| static const double arrays instead of vectors for weights | 0.94 secs | 3.24x   |
 
 ### 1. Flat vector instead of 3D vector
 
@@ -76,6 +78,7 @@ This improved the performance from `1.30` secs to `1.08` secs per 1024x1024 imag
 This didn't help that much.
 
 From
+
 ```cpp
 MyImage Lerp(const MyImage& a, const MyImage& b, double t) {
     MyImage result(a.width, a.height, a.channels);
@@ -101,3 +104,17 @@ MyImage Lerp(const MyImage& a, const MyImage& b, double t) {
     return result;
 }
 ```
+
+### 4. Micro-optimizations in BilinearTap
+
+Reducing the number of multiplications and also fetching data for the four pixels directly from memory.
+
+This improved the performance from `1.06` secs to `0.98` secs per 1024x1024 image.
+
+Refer to BilinearTap() for more details.
+
+### 5. static const double arrays instead of vectors for weights
+
+Used `static const double` arrays instead of `std::vector` for weights.
+
+This improved the performance from `0.98` secs to `0.94` secs per 1024x1024 image.
