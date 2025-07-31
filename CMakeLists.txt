@@ -3,6 +3,7 @@ project(Bloom_CPP)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Fetch raylib from GitHub
 include(FetchContent)
@@ -38,6 +39,7 @@ set_target_properties(Bloom_CPP PROPERTIES
 set_target_properties(Bloom_CPP PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}
 )
+
 
 # For Linux: Also link required system libraries
 if(UNIX AND NOT APPLE)

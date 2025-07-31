@@ -10,22 +10,17 @@ MyImage::MyImage(const char* path) : path(path) {
     channels = GetChannelCount_(image_.format);
 
     // Initialize the data Matrix
-    data = std::vector<std::vector<std::vector<double>>>(
-        height,
-        std::vector<std::vector<double>>(
-            width,
-            std::vector<double>(channels, 0.0)));
-
+    data = std::vector<double>(width * height * channels, 0.0);
     Color* colors = LoadImageColors(image_);
     // fill the data Matrix with normalized (0.0-1.0) values of the image
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
             int index = y * width + x;
-            data[y][x][0] = colors[index].r / 255.0;
-            data[y][x][1] = colors[index].g / 255.0;
-            data[y][x][2] = colors[index].b / 255.0;
+            SetPixel(x, y, 0, colors[index].r / 255.0);
+            SetPixel(x, y, 1, colors[index].g / 255.0);
+            SetPixel(x, y, 2, colors[index].b / 255.0);
             if (channels == 4) {
-                data[y][x][3] = colors[index].a / 255.0;
+                SetPixel(x, y, 3, colors[index].a / 255.0);
             }
         }
     }
@@ -33,11 +28,7 @@ MyImage::MyImage(const char* path) : path(path) {
 }
 
 MyImage::MyImage(int width, int height, int channels) : width(width), height(height), channels(channels) {
-    data = std::vector<std::vector<std::vector<double>>>(
-        height,
-        std::vector<std::vector<double>>(
-            width,
-            std::vector<double>(channels, 0.0)));
+    data = std::vector<double>(width * height * channels, 0.0);
     // NOTE: bad! where is the image_ initilization?
 }
 
@@ -46,11 +37,11 @@ MyImage::~MyImage() {
 }
 
 double MyImage::GetPixel(int x, int y, int channel) const{
-    return data[y][x][channel];
+    return data[(y * width + x) * channels + channel];
 }
 
 void MyImage::SetPixel(int x, int y, int channel, double value) {
-    data[y][x][channel] = value;
+    data[(y * width + x) * channels + channel] = value;
 }
 
 void MyImage::Save(const char* filename) {
@@ -59,11 +50,11 @@ void MyImage::Save(const char* filename) {
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
             int index = y * width + x;
-            colors[index].r = (unsigned char)(data[y][x][0] * 255.0);
-            colors[index].g = (unsigned char)(data[y][x][1] * 255.0);
-            colors[index].b = (unsigned char)(data[y][x][2] * 255.0);
+            colors[index].r = (unsigned char)(GetPixel(x, y, 0) * 255.0);
+            colors[index].g = (unsigned char)(GetPixel(x, y, 1) * 255.0);
+            colors[index].b = (unsigned char)(GetPixel(x, y, 2) * 255.0);
             colors[index].a = (channels == 4)
-                                  ? (unsigned char)(data[y][x][3] * 255.0)
+                                  ? (unsigned char)(GetPixel(x, y, 3) * 255.0)
                                   : 255;
         }
     }

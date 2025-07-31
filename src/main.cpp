@@ -220,7 +220,7 @@ void Bloom(MyImage& image, int samples = 8) {
 
 int main(int argc, const char** argv) {
     // load the image
-    MyImage image("images\\image2.png");
+    MyImage image("images/image2.png");
     // std::cout << "Image width: " << image.width << std::endl;
     // std::cout << "Image height: " << image.height << std::endl;
     // std::cout << "Image channels: " << image.channels << std::endl;
@@ -240,10 +240,10 @@ int main(int argc, const char** argv) {
     // std::cout << "After:" << image.GetPixel(512, 512, 0) << std::endl;
 
     // save the image
-    image.Save("output.png");
+    // image.Save("output.png");
     // std::cout << "Image saved to output.png" << std::endl;
 
     // display the result
-    DisplayImage("output.png");
+    // DisplayImage("output.png");
     return 0;
 }
