@@ -94,6 +94,10 @@ MyImage Upsample(const MyImage& image) {
         0.125, 0.25, 0.125,
         0.0625, 0.125, 0.0625};
 
+    // To avoid divisions in the inner-loop
+    double inv_new_w = 1.0 / new_w;
+    double inv_new_h = 1.0 / new_h;
+
     for (int i = 0; i < new_h; ++i) {
         for (int j = 0; j < new_w; ++j) {
             for (int ch = 0; ch < c; ++ch) {
@@ -104,8 +108,8 @@ MyImage Upsample(const MyImage& image) {
                     double weight = Weights[k];
 
                     // Normalized source coordinates
-                    double x = (j + ox) / new_w;
-                    double y = (i + oy) / new_h;
+                    double x = (j + ox) * inv_new_w;
+                    double y = (i + oy) * inv_new_h;
 
                     // Clamp
                     x = std::min(std::max(x, 0.0), 1.0);
@@ -153,19 +157,25 @@ MyImage DownSample(const MyImage& image) {
         0.0555555, 0.0555555, 0.0555555,
         0.0555555, 0.0555555, 0.0555555,
         0.0555555, 0.0555555, 0.0555555};
+    
+    // To avoid divisions in the inner-loop
+    double inv_new_w = 1.0 / new_w;
+    double inv_new_h = 1.0 / new_h;
 
     for (int i = 0; i < new_h; ++i) {
         for (int j = 0; j < new_w; ++j) {
             for (int ch = 0; ch < c; ++ch) {
                 double acc = 0.0;
+                double j_plus_half = j + 0.5;
+                double i_plus_half = i + 0.5;
                 for (int k = 0; k < 13; ++k) {
                     double ox = Coords[k][0];
                     double oy = Coords[k][1];
                     double weight = weights[k];
 
                     // Normalized coordinates in [0,1]
-                    double x = (j + 0.5 + ox) / new_w;
-                    double y = (i + 0.5 + oy) / new_h;
+                    double x = (j_plus_half + ox) * inv_new_w;
+                    double y = (i_plus_half + oy) * inv_new_h;
 
                     // Clamp
                     x = std::min(std::max(x, 0.0), 1.0);

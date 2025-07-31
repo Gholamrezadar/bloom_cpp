@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 4.0.0)
 project(Bloom_CPP)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -31,6 +31,38 @@ target_include_directories(Bloom_CPP PRIVATE src)
 # Link raylib
 target_link_libraries(Bloom_CPP PRIVATE raylib)
 
+# Compiler-specific optimizations
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # GCC optimizations
+    target_compile_options(Bloom_CPP PRIVATE 
+        -O3 
+        -march=native 
+        -ffast-math
+        -funroll-loops
+        -flto
+    )
+    target_link_options(Bloom_CPP PRIVATE -flto)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    # Clang optimizations
+    target_compile_options(Bloom_CPP PRIVATE 
+        -O3 
+        -march=native 
+        -ffast-math
+        -funroll-loops
+        -flto
+    )
+    target_link_options(Bloom_CPP PRIVATE -flto)
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    # MSVC optimizations
+    target_compile_options(Bloom_CPP PRIVATE 
+        /O2 
+        # /arch:AVX2
+        # /fp:fast
+        # /GL
+    )
+    target_link_options(Bloom_CPP PRIVATE /LTCG)
+endif()
+
 # place the executable in the same folder as this CMakeLists.txt file
 set_target_properties(Bloom_CPP PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}
@@ -39,6 +71,11 @@ set_target_properties(Bloom_CPP PROPERTIES
 set_target_properties(Bloom_CPP PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}
 )
+
+# Print configuration info
+message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
+message(STATUS "CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
+# message(STATUS "OpenMP_CXX_VERSION: ${OpenMP_CXX_VERSION}")
 
 
 # For Linux: Also link required system libraries
