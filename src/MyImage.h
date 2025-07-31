@@ -17,8 +17,14 @@ class MyImage {
     MyImage(int width, int height, int channels);
     ~MyImage();
 
-    double GetPixel(int x, int y, int channel) const;
-    void SetPixel(int x, int y, int channel, double value);
+    inline const double GetPixel(int x, int y, int channel) const {
+        return data[(y * width + x) * channels + channel];
+    }
+
+    inline void SetPixel(int x, int y, int channel, double value) {
+        data[(y * width + x) * channels + channel] = value;
+    }
+
     void Save(const char* filename);
 
    private:

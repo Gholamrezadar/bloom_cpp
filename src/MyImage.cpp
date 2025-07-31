@@ -36,14 +36,6 @@ MyImage::~MyImage() {
     // UnloadImage(image_);
 }
 
-double MyImage::GetPixel(int x, int y, int channel) const{
-    return data[(y * width + x) * channels + channel];
-}
-
-void MyImage::SetPixel(int x, int y, int channel, double value) {
-    data[(y * width + x) * channels + channel] = value;
-}
-
 void MyImage::Save(const char* filename) {
     Color* colors = (Color*)malloc(width * height * sizeof(Color));
 

@@ -23,14 +23,15 @@ Measured on an Intel i7-12700 CPU
 
 I tried different approaches to improve performance, here I list them for future reference. (CPU: i7-4930k)
 
-| Technique                        | Time      | fps      |
-| -------------------------------- | --------- | -------- |
-| Baseline                         | 3.05 secs | 0.32 fps |
-| Flat vector instead of 3D vector | 1.30 secs | 0.76 fps |
+| Technique                        | Time      | Speedup |
+| -------------------------------- | --------- | ------- |
+| Baseline                         | 3.05 secs | 1x      |
+| Flat vector instead of 3D vector | 1.30 secs | 2.3x    |
+| Inline the GetPixel and SetPixel | 1.08 secs | 1.2x    |
 
 ### 1. Flat vector instead of 3D vector
 
-This improved the performance from 3.05 secs to 1.30 secs per 1024x1024 image.
+This improved the performance from `3.05` secs to `1.30` secs per 1024x1024 image.
 
 From
 
@@ -62,3 +63,9 @@ void SetPixel(int x, int y, int channel, double value) {
     data[y * width + x * channels + channel] = value;
 }
 ```
+
+### 2. Inline GetPixel and SetPixel
+
+GetPixel and SetPixel are called very often, let's reduce the number of function calls.
+
+This improved the performance from `1.30` secs to `1.08` secs per 1024x1024 image.
