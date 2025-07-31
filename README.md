@@ -17,3 +17,26 @@ Measured on an Intel i7-12700 CPU
 | C++ (Release)     | 0.68 secs | 1.47 fps  |
 | C++ (Multithread) | ? secs    | ? fps     |
 | OpenGL            | ? secs    | ? fps     |
+
+## Performance Improvements
+
+I tried different approaches to improve performance, here I list them for future reference.
+
+| Technique                        | Time     | fps   |
+| -------------------------------- | -------- | ----- |
+| Baseline                         | 0.5 secs | - fps |
+| Flat vector instead of 3D vector | 0.5 secs | - fps |
+
+### 1. Flat vector instead of 3D vector
+
+Old:
+
+```cpp
+std::vector<std::vector<std::vector<double>>> pixels;
+```
+
+Now:
+
+```cpp
+std::vector<double> pixels;
+```

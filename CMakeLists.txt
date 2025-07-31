@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.1.0)
+cmake_minimum_required(VERSION 4.0.0)
 project(Bloom_CPP)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -32,7 +32,11 @@ target_link_libraries(Bloom_CPP PRIVATE raylib)
 
 # place the executable in the same folder as this CMakeLists.txt file
 set_target_properties(Bloom_CPP PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_SOURCE_DIR}
+)
+# place the executable in the same folder as this CMakeLists.txt file
+set_target_properties(Bloom_CPP PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_SOURCE_DIR}
 )
 
 # For Linux: Also link required system libraries
