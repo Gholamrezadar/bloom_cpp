@@ -15,7 +15,7 @@ Measured on an Intel i7-12700 CPU
 | Python                 | 39.5 secs | 0.025 fps |
 | C++ (Debug)            | 2.7 secs  | 0.37 fps  |
 | C++ (Release)          | 0.68 secs | 1.47 fps  |
-| C++ (Improved+Release) | ? secs    | ? fps     |
+| C++ (Improved+Release) | 0.11 secs | 9 fps     |
 | C++ (Multithread)      | ? secs    | ? fps     |
 | OpenGL                 | ? secs    | ? fps     |
 
