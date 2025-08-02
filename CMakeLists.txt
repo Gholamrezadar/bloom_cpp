@@ -23,10 +23,14 @@ set(BUILD_GAMES OFF)
 
 FetchContent_MakeAvailable(raylib)
 
-# Define your executable
-add_executable(Bloom_CPP src/main.cpp src/MyImage.cpp src/MyImage.h)
+# Find OpenMP
+find_package(OpenMP REQUIRED)
 
-target_include_directories(Bloom_CPP PRIVATE src)
+# Define your executable
+set(SRC_DIR src_claude_openmp) # Change this to compile other versions of the code
+add_executable(Bloom_CPP ${SRC_DIR}/main.cpp ${SRC_DIR}/MyImage.cpp ${SRC_DIR}/MyImage.h)
+
+target_include_directories(Bloom_CPP PRIVATE ${SRC_DIR})
 
 # Link raylib
 target_link_libraries(Bloom_CPP PRIVATE raylib)
@@ -75,10 +79,15 @@ set_target_properties(Bloom_CPP PROPERTIES
 # Print configuration info
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 message(STATUS "CMAKE_CXX_COMPILER_ID: ${CMAKE_CXX_COMPILER_ID}")
-# message(STATUS "OpenMP_CXX_VERSION: ${OpenMP_CXX_VERSION}")
-
+message(STATUS "OpenMP_CXX_VERSION: ${OpenMP_CXX_VERSION}")
 
 # For Linux: Also link required system libraries
 if(UNIX AND NOT APPLE)
     target_link_libraries(Bloom_CPP PRIVATE m pthread dl rt X11)
+endif()
+
+# For OpenMP
+# Link OpenMP if found
+if(OpenMP_CXX_FOUND)
+    target_link_libraries(Bloom_CPP PUBLIC OpenMP::OpenMP_CXX)
 endif()

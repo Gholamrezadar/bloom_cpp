@@ -10,14 +10,16 @@ Implementing a bloom effect on CPU for learning purposes.
 
 Measured on an Intel i7-12700 CPU
 
-| Implementation         | time      | fps       |
-| ---------------------- | --------- | --------- |
-| Python                 | 39.5 secs | 0.025 fps |
-| C++ (Debug)            | 2.7 secs  | 0.37 fps  |
-| C++ (Release)          | 0.68 secs | 1.47 fps  |
-| C++ (Improved+Release) | 0.11 secs | 9 fps     |
-| C++ (Multithread)      | ? secs    | ? fps     |
-| OpenGL                 | ? secs    | ? fps     |
+| Implementation       | time       | fps       |
+| -------------------- | ---------- | --------- |
+| Python               | 39.5 secs  | 0.025 fps |
+| C++ (Debug)          | 2.7 secs   | 0.37 fps  |
+| C++ (Release)        | 0.68 secs  | 1.47 fps  |
+| C++ (Improved)       | 0.11 secs  | 9 fps     |
+| C++ (Multithread 8t) | 0.032 secs | 31 fps    |
+| OpenGL               | ? secs     | ? fps     |
+
+Note: Change ${SRC_DIR} in CMakeLists.txt to compile other versions of the code.
 
 ## Performance Improvements
 
@@ -34,6 +36,7 @@ I tried different approaches to improve performance, here I list them for future
 | Avoid divisions in the inner-loop                         | 0.87 secs | 3.50x   |
 | std::move and emplace_back                                | 0.81 secs | 3.76x   |
 | Claude's version                                          | 0.72 secs | 4.23x   |
+| OpenMP Multithread with 8 threads (Claude)                | - secs    | -x      |
 
 ### 1. Flat vector instead of 3D vector
 
@@ -136,3 +139,9 @@ Claude recommended a few other optimizations, including:
 - Using `std::vector::emplace_back` instead of `std::vector::push_back`
 
 This improved the performance from `0.88` secs to `0.80` secs per 1024x1024 image.
+
+### 8. OpenMP Multithreading
+
+Claude wrote a version of the code with OpenMP multithreading. for this image-size (1024x1024) and i7-12700(16pt + 4et), 8 threads gave the best performance.
+
+![graph](graph.png)

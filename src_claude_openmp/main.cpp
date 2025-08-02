@@ -210,13 +210,13 @@ void Bloom(MyImage& image, int samples = 8) {
     downsampled_list.emplace_back(std::move(image));
     
     // Downsample chain - Sequential due to dependencies
-    std::cout << "Downsampling chain...\n";
+    // std::cout << "Downsampling chain...\n";
     for (int i = 0; i < samples; ++i) {
         downsampled_list.emplace_back(DownSample(downsampled_list.back()));
     }
     
     // Upsample chain with lerping - Sequential due to dependencies
-    std::cout << "Upsampling and blending...\n";
+    // std::cout << "Upsampling and blending...\n";
     constexpr double lerp_weight = 0.2;
     MyImage temp = std::move(downsampled_list[samples]);
     
@@ -226,7 +226,7 @@ void Bloom(MyImage& image, int samples = 8) {
     }
     
     // Final multiplication and clamping - Highly parallel
-    std::cout << "Final processing...\n";
+    // std::cout << "Final processing...\n";
     constexpr double mult = 6.0;
     double* data = temp.GetRawData();
     int total_elements = temp.width * temp.height * temp.channels;
@@ -252,13 +252,13 @@ void SetOptimalThreadCount(int image_size) {
     } else {
         optimal_threads = max_threads;  // Large images can use all threads
     }
-    
+    optimal_threads = 8; // for debugging
     omp_set_num_threads(optimal_threads);
     std::cout << "Set thread count to: " << optimal_threads << " (max available: " << max_threads << ")\n";
 }
 
 int main(int argc, const char** argv) {
-    MyImage image("images\\image2.png");
+    MyImage image("images/image2.png");
     
     // Set optimal thread count based on image size
     SetOptimalThreadCount(image.width * image.height);
@@ -273,8 +273,8 @@ int main(int argc, const char** argv) {
     std::chrono::duration<double> elapsed = end - start;
     std::cout << "Elapsed time: " << elapsed.count() << " seconds\n";
     
-    image.Save("output.png");
-    DisplayImage("output.png");
+    // image.Save("output.png");
+    // DisplayImage("output.png");
     
     return 0;
 }

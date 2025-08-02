@@ -228,7 +228,7 @@ void Bloom(MyImage& image, int samples = 8) {
 }
 
 int main(int argc, const char** argv) {
-    MyImage image("images\\image2.png");
+    MyImage image("images/image2.png");
     
     std::cout << "Performing Bloom...\n";
     auto start = std::chrono::high_resolution_clock::now();
