@@ -191,7 +191,7 @@ MyImage Lerp(const MyImage& a, const MyImage& b, double t) {
     double inv_t = 1.0 - t;
     
     // Highly parallel vectorized operation
-    #pragma omp parallel for simd schedule(static) if(total_elements > 10000)
+    #pragma omp parallel for schedule(static) if(total_elements > 10000)
     for (int i = 0; i < total_elements; ++i) {
         result_data[i] = a_data[i] * inv_t + b_data[i] * t;
     }
@@ -231,7 +231,7 @@ void Bloom(MyImage& image, int samples = 8) {
     double* data = temp.GetRawData();
     int total_elements = temp.width * temp.height * temp.channels;
     
-    #pragma omp parallel for simd schedule(static) if(total_elements > 10000)
+    #pragma omp parallel for schedule(static) if(total_elements > 10000)
     for (int i = 0; i < total_elements; ++i) {
         data[i] = std::max(0.0, std::min(data[i] * mult, 1.0));
     }
@@ -252,7 +252,7 @@ void SetOptimalThreadCount(int image_size) {
     } else {
         optimal_threads = max_threads;  // Large images can use all threads
     }
-    optimal_threads = 8; // for debugging
+    optimal_threads = 10; // for debugging
     omp_set_num_threads(optimal_threads);
     std::cout << "Set thread count to: " << optimal_threads << " (max available: " << max_threads << ")\n";
 }

@@ -36,7 +36,7 @@ I tried different approaches to improve performance, here I list them for future
 | Avoid divisions in the inner-loop                         | 0.87 secs | 3.50x   |
 | std::move and emplace_back                                | 0.81 secs | 3.76x   |
 | Claude's version                                          | 0.72 secs | 4.23x   |
-| OpenMP Multithread with 8 threads (Claude)                | - secs    | -x      |
+| OpenMP Multithread with 10 threads (Claude)               | 0.16 secs | 19x     |
 
 ### 1. Flat vector instead of 3D vector
 
