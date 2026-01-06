@@ -25,8 +25,8 @@ A few notes:
   
   E' = E
   D' = lerp(D, E', 0.2)
-  D' = lerp(C, D', 0.2)
-  D' = lerp(B, C', 0.2)
+  C' = lerp(C, D', 0.2)
+  B' = lerp(B, C', 0.2)
   A' = lerp(A, B', 0.2)
   
   A' is the result
