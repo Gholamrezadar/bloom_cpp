@@ -6,6 +6,32 @@ Implementing a bloom effect on CPU for learning purposes.
 
 ![output](output.png)
 
+## The Algorithm
+
+As can be seen from the diagram below, we start by downsampling the original image multiple times storing them in a list. then we take the smallest image and upsample it to be the same size as the previous (larger) image aka the image that has been downsampled one less time.
+Now that we have two images of the same size (e.g. 256x256 and 256x256) we mix them together. Here we use a simple lerp with alpha=0.2. We continue until we get the final image.
+
+![flowchart](bloom_flowchart.png)
+
+A few notes:
+- Bilinear tap is retrieving the bilinear interpolation of the 4 closest pixels around a target point (x, y). x and y are float values between 0-1 but we need to find their 4 nearest pixels and blend their values based on their distance to (x,y). See https://github.com/Gholamrezadar/bloom_cpp/blob/560ed060b5cbf32fc44052eaf1458ec1890ed821/src_shit/main.cpp#L36
+- Downsampling is done by calculating the weighted sum of bilinear taps at 13 predefined points each with predefined weights. See https://github.com/Gholamrezadar/bloom_cpp/blob/560ed060b5cbf32fc44052eaf1458ec1890ed821/src_shit/main.cpp#L124
+  ![taps_locations](https://learnopengl.com/img/guest/2022/physically_based_bloom/downsample-figure.png)
+- Upsampling is done similarly but using 9 points with predefined weights. See https://github.com/Gholamrezadar/bloom_cpp/blob/560ed060b5cbf32fc44052eaf1458ec1890ed821/src_shit/main.cpp#L76
+- The blending of downsampled and upsampled images look like this:
+  ```
+  B-E are downsampled versions of original image (A)
+  then upsampling:
+  
+  E' = E
+  D' = lerp(D, E', 0.2)
+  D' = lerp(C, D', 0.2)
+  D' = lerp(B, C', 0.2)
+  A' = lerp(A, B', 0.2)
+  
+  A' is the result
+  ```
+
 ## Performance Comparison
 
 Measured on an Intel i7-12700 CPU
